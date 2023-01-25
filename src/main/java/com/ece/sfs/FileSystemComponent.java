@@ -12,6 +12,21 @@ public abstract class FileSystemComponent {
                 "set modified date of a file system component");
     }
 
+    public String getAbsolutePath() {
+        throw new UnsupportedOperationException("Unsupported operation: cannot " +
+                "get absolute path of a file system component");
+    }
+
+    public String getBaseDir() {
+        throw new UnsupportedOperationException("Unsupported operation: cannot " +
+                "get base directory of a file system component");
+    }
+
+    public void setBaseDir(String baseDir) {
+        throw new UnsupportedOperationException("Unsupported operation: cannot " +
+                "set base directory of a file system component");
+    }
+
     public String getName() {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "get name of a file system component");
