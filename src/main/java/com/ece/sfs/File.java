@@ -7,20 +7,23 @@ import java.util.UUID;
 public class File extends FileSystemComponent {
 
     private Long size = 0L;
+    private String absolutePath = "";
     private String baseDir = "";
     private String name = "";
     private Date lastModifiedDate;
 
-    private final UUID uuid = UUID.randomUUID();
+    private UUID uuid;
 
     // TODO: Implement File Navigation
     // TODO: Implement Group and User Access for file
 
     public File(String name, String baseDir, Long size, Date lastModifiedDate) {
+        uuid = UUID.randomUUID();
         setName(name);
         setBaseDir(baseDir);
         setSize(size);
         setDate(lastModifiedDate);
+        setAbsolutePath(Util.resolvePath(baseDir, name));
     }
 
     @Override
@@ -39,11 +42,12 @@ public class File extends FileSystemComponent {
 
     @Override
     public String getAbsolutePath() {
-        if (baseDir.compareTo("/") == 0) {
-            return baseDir + name;
-        }
+        return absolutePath;
+    }
 
-        return baseDir + "/" + name;
+    @Override
+    public void setAbsolutePath(String absolutePath) {
+        this.absolutePath = absolutePath;
     }
 
     @Override

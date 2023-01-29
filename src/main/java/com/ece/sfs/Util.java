@@ -11,4 +11,15 @@ public class Util {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return simpleDateFormat.format(date);
     }
+
+    public static String resolvePath(String baseDir, String name) {
+        String absolutePath;
+        if (baseDir.compareTo("/") == 0) {
+            absolutePath = baseDir + name;
+        } else {
+            absolutePath = baseDir + "/" + name;
+        }
+
+        return absolutePath;
+    }
 }

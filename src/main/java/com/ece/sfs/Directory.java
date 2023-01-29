@@ -5,21 +5,26 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Directory extends FileSystemComponent {
+
+    private String absolutePath = "";
     private String baseDir = "";
     private String name = "";
     private Date lastModifiedDate;
 
-    private final UUID uuid = UUID.randomUUID();
+    private UUID uuid;
 
-    private final HashMap<String, FileSystemComponent> entries = new HashMap<>();
+    private HashMap<String, FileSystemComponent> entries;
 
     // TODO: Implement File Navigation
     // TODO: Implement Group and User Access for directory
 
     public Directory(String baseDir, String name, Date lastModifiedDate) {
+        uuid = UUID.randomUUID();
+        entries = new HashMap<>();
         setName(name);
         setBaseDir(baseDir);
         setDate(lastModifiedDate);
+        setAbsolutePath(Util.resolvePath(baseDir, name));
     }
 
     @Override
@@ -34,15 +39,15 @@ public class Directory extends FileSystemComponent {
 
     @Override
     public String getAbsolutePath() {
-        if (name.compareTo("/") == 0) {
-            return name;
-        }
+        return absolutePath;
+    }
 
-        if (baseDir.compareTo("/") == 0) {
-            return baseDir + name;
+    public void setAbsolutePath(String absolutePath) {
+        if (absolutePath != null) {
+            this.absolutePath = absolutePath;
+        } else {
+            throw new IllegalArgumentException("Invalid absolute path");
         }
-
-        return baseDir + "/" + name;
     }
 
     @Override

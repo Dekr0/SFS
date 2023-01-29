@@ -17,6 +17,11 @@ public abstract class FileSystemComponent {
                 "get absolute path of a file system component");
     }
 
+    public void setAbsolutePath(String absolutePath) {
+        throw new UnsupportedOperationException("Unsupported operation: cannot " +
+                "set absolute path of a file system component");
+    }
+
     public String getBaseDir() {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "get base directory of a file system component");
