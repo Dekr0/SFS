@@ -4,64 +4,36 @@ package com.ece.sfs;
 import java.util.Date;
 import java.util.UUID;
 
-public class File extends FileSystemComponent {
+public class File extends Component {
 
-    private Long size = 0L;
-    private String absolutePath = "";
-    private String baseDir = "";
-    private String name = "";
+    private AccessRightList accessRightList;
     private Date lastModifiedDate;
-
-    private UUID uuid;
+    private Directory parent;
+    private String name = "";
+    private final UUID uuid;
 
     // TODO: Implement File Navigation
     // TODO: Implement Group and User Access for file
 
-    public File(String name, String baseDir, Long size, Date lastModifiedDate) {
+    public File(String name, Directory parent, Date lastModifiedDate) {
         uuid = UUID.randomUUID();
         setName(name);
-        setBaseDir(baseDir);
-        setSize(size);
+        setParent(parent);
         setDate(lastModifiedDate);
-        setAbsolutePath(Util.resolvePath(baseDir, name));
     }
 
     @Override
-    public Long getSize() {
-        return size;
+    public Directory getParent() {
+        return parent;
     }
 
     @Override
-    public void setSize(Long size) {
-        if (size != null && size >= 0) {
-            this.size = size;
-        } else {
-            throw new IllegalArgumentException("Invalid size");
+    public void setParent(Directory parent) {
+        if (parent == null) {
+            throw new IllegalArgumentException("Parent directory cannot be null");
         }
-    }
 
-    @Override
-    public String getAbsolutePath() {
-        return absolutePath;
-    }
-
-    @Override
-    public void setAbsolutePath(String absolutePath) {
-        this.absolutePath = absolutePath;
-    }
-
-    @Override
-    public String getBaseDir() {
-        return baseDir;
-    }
-
-    @Override
-    public void setBaseDir(String baseDir) {
-        if (baseDir != null) {
-            this.baseDir = baseDir;
-        } else {
-            throw new IllegalArgumentException("Invalid base directory");
-        }
+        this.parent = parent;
     }
 
     @Override
