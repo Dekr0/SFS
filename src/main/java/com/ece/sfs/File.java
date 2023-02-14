@@ -1,12 +1,12 @@
 package com.ece.sfs;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
 public class File extends Component {
-
-    private AccessRightList accessRightList;
+    private final AccessRightList accessRightList;
     private Date lastModifiedDate;
     private Directory parent;
     private String name = "";
@@ -15,11 +15,28 @@ public class File extends Component {
     // TODO: Implement File Navigation
     // TODO: Implement Group and User Access for file
 
-    public File(String name, Directory parent, Date lastModifiedDate) {
-        uuid = UUID.randomUUID();
+    public File(String name, AccessRightList accessRightList, Directory parent, Date lastModifiedDate, UUID uuid) {
+        this.accessRightList = accessRightList;
+        this.accessRightList.addAccessRight("root", AccessRight.defaultAR());
+        this.uuid = uuid;
         setName(name);
         setParent(parent);
         setDate(lastModifiedDate);
+    }
+
+    @Override
+    public void addAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
+        accessRightList.addAccessRight(username, newAccessRights);
+    }
+
+    @Override
+    public void removeAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
+
+    }
+
+    @Override
+    public boolean validAccessRight(String username, AccessRight accessRight) {
+        return accessRightList.validAccessRight(username, accessRight);
     }
 
     @Override
