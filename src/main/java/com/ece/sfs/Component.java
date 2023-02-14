@@ -1,6 +1,8 @@
 package com.ece.sfs;
 
 
+import java.util.ArrayList;
+
 public abstract class Component {
 
     /* The following methods are not supported for File class */
@@ -22,6 +24,18 @@ public abstract class Component {
     }
 
     /* ------------------------------------------------------ */
+
+    public void addAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    public void removeAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    public boolean validAccessRight(String username, AccessRight accessRight) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
     public String getDate() {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
