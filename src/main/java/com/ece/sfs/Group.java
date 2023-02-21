@@ -1,26 +1,60 @@
 package com.ece.sfs;
 
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class Group {
-    private String name;
-    private HashMap<String, User> users;
 
-    public Group(String name) {
+    private ArrayList<GrantedAuthority> authorities;
+    private String name;
+    private HashSet<String> usernames;
+
+    public Group(ArrayList<GrantedAuthority> authorities, String name, HashSet<String> usernames) {
+        this.authorities = authorities;
         this.name = name;
-        this.users = new HashMap<>();
+        this.usernames = usernames;
     }
 
-    public Group(String name, HashMap<String, User> users) {
-        this.name = name;
-        this.users = users;
+    public boolean addAuthority(GrantedAuthority authority) {
+        boolean flag = false;
+
+        if (!authorities.contains(authority)) {
+            authorities.add(authority);
+
+            flag = true;
+        }
+
+        return flag;
+    }
+
+    public List<GrantedAuthority> getAuthorities() {
+        return new ArrayList<>(authorities);
+    }
+
+    public boolean removeAuthority(GrantedAuthority authority) {
+        return authorities.remove(authority);
+    }
+
+    public boolean addUser(String username) {
+        return usernames.add(username);
+    }
+
+    public boolean hasUser(String username) {
+        return usernames.contains(username);
+    }
+
+    public boolean removeUser(String username) {
+        return usernames.remove(username);
     }
 
     public void setName(String name) {
         if (name != null && !name.isEmpty()) {
             this.name = name;
+
+            return;
         }
 
         throw new IllegalArgumentException("Name cannot be null or empty");
