@@ -1,69 +1,52 @@
 package com.ece.sfs;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+
 import java.util.*;
 
+import static com.ece.sfs.Util.validString;
 
+
+@Controller
 public class FileSystem {
 
     public enum FileType {
         FILE, DIR
     }
 
+    private String username;
+    private String groupName;
+
     private Directory currentDirectory;
-    private final String username;
+    private final AccessManager accessManager;
 
-    public FileSystem(Directory root, String username) {
-        currentDirectory = (Directory) root.getComponent("home");
-        currentDirectory.addAccessRights(username, new ArrayList<>(List.of(AccessRight.READ)));
-
-        if (!currentDirectory.hasComponent(username)) {
-            currentDirectory.addComponent(
-                    new Directory(
-                            username,
-                            new AccessRightList(
-                                    new HashMap<>(Map.of(username, AccessRight.defaultAR()))
-                            ),
-                            currentDirectory,
-                            Calendar.getInstance().getTime(),
-                            UUID.randomUUID(),
-                            new HashMap<>()
-                    )
-            );
-        }
-
-        currentDirectory = (Directory) currentDirectory.getComponent(username);
-
-        this.username = username;
+    @Autowired
+    public FileSystem(AccessManager accessManager, Directory root) {
+        this.accessManager = accessManager;
+        this.currentDirectory = root;
     }
 
     public boolean changeDirectory(String name) {
-        if (name != null && !name.isEmpty()) {
+        if (!validString(name)) {
             try {
-                if (currentDirectory.getComponent(name).validAccessRight(username, AccessRight.READ)) {
-                    currentDirectory = (Directory) currentDirectory.getComponent(name);
-                    return true;
+                Directory dest;
+
+                if (name.compareTo("..") == 0) {
+                    dest = (Directory) currentDirectory.getParent();
+                } else {
+                    dest = (Directory) currentDirectory.getComponent(name);
                 }
 
+                if (accessManager.hasAccessRight(groupName, username, dest.getUUID(), AccessRight.READ)) {
+                    currentDirectory = dest;
+                    return true;
+                }
                 System.err.println("You do not have permission to access directory " + name);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             } catch (ClassCastException e) {
                 System.err.println(name + " is not a directory");
-            }
-        }
-
-        return false;
-    }
-
-    public boolean changePrevDirectory() {
-        Directory parent = (Directory) currentDirectory.getParent();
-        if (parent != null) {
-            if (parent.validAccessRight(username, AccessRight.READ)) {
-                currentDirectory = parent;
-
-                return true;
-            } else {
-                System.err.println("You do not have permission to access directory " + parent.getName());
             }
         }
 
@@ -83,38 +66,44 @@ public class FileSystem {
     }
 
     public boolean createComponent(String name, FileType type) {
-        if (name == null || name.isEmpty()) {
+        if (validString(name)) {
             System.err.println("Name cannot be empty");
         } else {
             try {
-                if (type == FileType.FILE) {
-                    currentDirectory.addComponent(
-                            new File(
-                                    name,
-                                    new AccessRightList(
-                                            new HashMap<>(Map.of(username, AccessRight.defaultAR()))
-                                    ),
-                                    currentDirectory,
-                                    Calendar.getInstance().getTime(),
-                                    UUID.randomUUID()
+                if (accessManager.hasAccessRight(groupName, username, currentDirectory.getUUID(), AccessRight.WRITE)) {
+                    if (type == FileType.FILE) {
+                        currentDirectory.addComponent(
+                                new File(
+                                        name,
+                                        currentDirectory,
+                                        Calendar.getInstance().getTime(),
+                                        UUID.randomUUID()
+                                )
+                        );
+                    } else if (type == FileType.DIR) {
+                        currentDirectory.addComponent(
+                                new Directory(
+                                        name,
+                                        currentDirectory,
+                                        Calendar.getInstance().getTime(),
+                                        UUID.randomUUID(),
+                                        new HashMap<>()
+                                )
+                        );
+                    }
+
+                    accessManager.addAccessRightList(
+                            currentDirectory.getComponent(name).getUUID(),
+                            new AccessRightList(
+                                    AccessRight.defaultAR(username),
+                                    AccessRight.defaultRead(groupName)
                             )
                     );
-                } else if (type == FileType.DIR) {
-                    currentDirectory.addComponent(
-                            new Directory(
-                                    name,
-                                    new AccessRightList(
-                                            new HashMap<>(Map.of(username, AccessRight.defaultAR()))
-                                    ),
-                                    currentDirectory,
-                                    Calendar.getInstance().getTime(),
-                                    UUID.randomUUID(),
-                                    new HashMap<>()
-                            )
-                    );
+
+                    return true;
                 }
 
-                return true;
+                System.err.println("You do not have permission to create a component in this directory");
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
@@ -124,17 +113,16 @@ public class FileSystem {
     }
 
     public boolean deleteComponent(String name) {
-        if (name == null || name.isEmpty()) {
+        if (validString(name)) {
             System.err.println("Name cannot be empty");
         } else {
             try {
-                if (currentDirectory.getComponent(name).validAccessRight(username, AccessRight.WRITE)) {
+                Component target = currentDirectory.getComponent(name);
+                if (accessManager.hasAccessRight(groupName, username, target.getUUID(), AccessRight.WRITE)) {
                     currentDirectory.removeComponent(name);
-
                     return true;
-                } else {
-                    System.err.println("You do not have permission to delete " + name);
                 }
+                System.err.println("You do not have permission to delete " + name);
             } catch (IllegalArgumentException e) {
                 System.err.println(e.getMessage());
             }
@@ -146,20 +134,66 @@ public class FileSystem {
     public boolean renameComponent(String oldName, String newName) {
         try {
             Component component = currentDirectory.getComponent(oldName);
-            if (component.validAccessRight(username, AccessRight.WRITE)) {
+            if (accessManager.hasAccessRight(groupName, username, component.getUUID(), AccessRight.WRITE)) {
                 component.setName(newName);
 
                 currentDirectory.removeComponent(oldName);
                 currentDirectory.addComponent(component);
 
                 return true;
-            } else {
-                System.err.println("You do not have permission to rename " + oldName);
             }
+
+            System.err.println("You do not have permission to rename " + oldName);
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
         }
 
         return false;
+    }
+
+    public void setGroupName(String groupName) throws IllegalArgumentException {
+        if (validString(groupName)) {
+            throw new IllegalArgumentException("Group name cannot be empty");
+        } else {
+            this.groupName = groupName;
+        }
+    }
+
+    public void setUsername(String username) throws IllegalArgumentException {
+        if (validString(username)) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        } else {
+            this.username = username;
+        }
+    }
+
+    public void loginHome(String groupName, String username) throws IllegalArgumentException {
+        setUsername(username);
+        setGroupName(groupName);
+
+        currentDirectory = (Directory) currentDirectory.getComponent("home");
+
+        if (!currentDirectory.hasComponent(username)) {
+            currentDirectory.addComponent(
+                    new Directory(
+                            username,
+                            currentDirectory,
+                            Calendar.getInstance().getTime(),
+                            UUID.randomUUID(),
+                            new HashMap<>()
+                    )
+            );
+
+            accessManager.addAccessRightList(
+                    currentDirectory.getComponent(username).getUUID(),
+                    new AccessRightList(
+                            AccessRight.defaultAR(username),
+                            AccessRight.defaultRead(groupName)
+                    )
+            );
+        }
+
+        currentDirectory = (Directory) currentDirectory.getComponent(username);
+
     }
 }

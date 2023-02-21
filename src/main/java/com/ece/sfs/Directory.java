@@ -5,11 +5,10 @@ import java.util.*;
 
 public class Directory extends Component {
 
-    private final AccessRightList accessRightList;
     private Directory parent = null;
     private Date lastModifiedDate;
     private String name = "";
-    private final UUID uuid;
+    private final String uuid;
 
     private final HashMap<String, Component> components;
 
@@ -18,34 +17,16 @@ public class Directory extends Component {
 
     public Directory(
             String name,
-            AccessRightList accessRightList,
             Directory parent,
             Date lastModifiedDate,
             UUID uuid,
             HashMap<String, Component> components
     ) {
-        this.accessRightList = accessRightList;
-        this.accessRightList.addAccessRight("root", AccessRight.defaultAR());
-        this.uuid = uuid;
+        this.uuid = uuid.toString();
         this.components = components;
         setName(name);
         setParent(parent);
         setDate(lastModifiedDate);
-    }
-
-    @Override
-    public void addAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
-        accessRightList.addAccessRight(username, newAccessRights);
-    }
-
-    @Override
-    public void removeAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
-        super.removeAccessRights(username, newAccessRights);
-    }
-
-    @Override
-    public boolean validAccessRight(String username, AccessRight accessRight) {
-        return accessRightList.validAccessRight(username, accessRight);
     }
 
     @Override
@@ -58,7 +39,7 @@ public class Directory extends Component {
     }
 
     @Override
-    public Component getComponent(String name) {
+    public Component getComponent(String name) throws IllegalArgumentException {
         if (hasComponent(name)) {
             return components.get(name);
         }
@@ -130,7 +111,7 @@ public class Directory extends Component {
     }
 
     @Override
-    public int hashCode() {
-        return uuid.hashCode();
+    public String getUUID() {
+        return uuid;
     }
 }
