@@ -1,7 +1,5 @@
 package com.ece.sfs;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -21,5 +19,9 @@ public class Util {
         }
 
         return absolutePath;
+    }
+
+    public static boolean validString(String string) throws IllegalArgumentException {
+        return string == null || string.isEmpty();
     }
 }
