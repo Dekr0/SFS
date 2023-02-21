@@ -1,8 +1,6 @@
 package com.ece.sfs;
 
 
-import java.util.ArrayList;
-
 public abstract class Component {
 
     /* The following methods are not supported for File class */
