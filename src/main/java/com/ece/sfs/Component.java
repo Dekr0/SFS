@@ -25,18 +25,6 @@ public abstract class Component {
 
     /* ------------------------------------------------------ */
 
-    public void addAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public void removeAccessRights(String username, ArrayList<AccessRight> newAccessRights) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    public boolean validAccessRight(String username, AccessRight accessRight) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
     public String getDate() {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "get modified date of a file system component");
@@ -55,11 +43,6 @@ public abstract class Component {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void getEncryptedName() {
-        throw new UnsupportedOperationException("Unsupported operation: cannot " +
-                "get encrypted name of a file system component");
-    }
-
     public String getName() {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "get name of a file system component");
@@ -68,5 +51,9 @@ public abstract class Component {
     public void setName(String name) {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "set name of a file system component");
+    }
+
+    public String getUUID(){
+        throw new UnsupportedOperationException("Not implemented");
     }
 }
