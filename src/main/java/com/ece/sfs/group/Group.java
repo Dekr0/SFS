@@ -1,4 +1,4 @@
-package com.ece.sfs;
+package com.ece.sfs.group;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -40,6 +40,10 @@ public class Group {
 
     public boolean addUser(String username) {
         return usernames.add(username);
+    }
+
+    public List<String> getUsers() {
+        return new ArrayList<>(usernames);
     }
 
     public boolean hasUser(String username) {
