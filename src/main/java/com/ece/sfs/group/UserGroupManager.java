@@ -1,4 +1,4 @@
-package com.ece.sfs;
+package com.ece.sfs.group;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.provisioning.GroupManager;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.ece.sfs.Util.validString;
+import static com.ece.sfs.Util.validName;
 
 
 public class UserGroupManager implements GroupManager {
@@ -29,13 +29,27 @@ public class UserGroupManager implements GroupManager {
 
     @Override
     public List<String> findUsersInGroup(String groupName) {
+        if (validName(groupName)) {
+            throw new IllegalArgumentException("Invalid group name");
+        }
+
+        if (!hasGroup(groupName)) {
+            throw new IllegalArgumentException("Group does not exist");
+        }
+
+        for (Group group : groups) {
+            if (group.getName().compareTo(groupName) == 0) {
+                return group.getUsers();
+            }
+        }
+
         return null;
     }
 
     @Override
     public void createGroup(String groupName, List<GrantedAuthority> authorities)
             throws IllegalArgumentException {
-        if (validString(groupName)) {
+        if (validName(groupName)) {
             throw new IllegalArgumentException("Group name cannot be null or empty");
         }
 
@@ -57,7 +71,7 @@ public class UserGroupManager implements GroupManager {
 
     @Override
     public void deleteGroup(String groupName) throws IllegalArgumentException {
-        if (validString(groupName)) {
+        if (validName(groupName)) {
             throw new IllegalArgumentException("Group name cannot be null or empty");
         }
 
@@ -71,7 +85,7 @@ public class UserGroupManager implements GroupManager {
     @Override
     public void renameGroup(String oldName, String newName)
             throws IllegalArgumentException {
-        if (validString(oldName) || validString(newName)) {
+        if (validName(oldName) || validName(newName)) {
             throw new IllegalArgumentException("Old group name or new name cannot be null or empty");
         }
 
@@ -89,7 +103,7 @@ public class UserGroupManager implements GroupManager {
     @Override
     public void addUserToGroup(String username, String group)
             throws IllegalArgumentException {
-        if (validString(username) || validString(group)) {
+        if (validName(username) || validName(group)) {
             throw new IllegalArgumentException("Username or group name cannot be null or empty");
         }
 
@@ -107,7 +121,7 @@ public class UserGroupManager implements GroupManager {
     }
 
     public boolean isUserInGroup(String username, String groupName) {
-        if (validString(username) || validString(groupName)) {
+        if (validName(username) || validName(groupName)) {
             throw new IllegalArgumentException("Username or group name cannot be null or empty");
         }
 
@@ -139,7 +153,7 @@ public class UserGroupManager implements GroupManager {
     @Override
     public void removeUserFromGroup(String username, String groupName)
             throws IllegalArgumentException {
-        if (validString(username) || validString(groupName)) {
+        if (validName(username) || validName(groupName)) {
             throw new IllegalArgumentException("Username or group name cannot be null or empty");
         }
 
@@ -160,7 +174,7 @@ public class UserGroupManager implements GroupManager {
     public List<GrantedAuthority> findGroupAuthorities(String groupName)
             throws IllegalArgumentException {
 
-        if (validString(groupName)) {
+        if (validName(groupName)) {
             throw new IllegalArgumentException("Group name cannot be null or empty");
         }
 
@@ -180,7 +194,7 @@ public class UserGroupManager implements GroupManager {
     @Override
     public void addGroupAuthority(String groupName, GrantedAuthority authority)
             throws IllegalArgumentException {
-        if (validString(groupName) || authority == null) {
+        if (validName(groupName) || authority == null) {
             throw new IllegalArgumentException("Group name or authority cannot be null or empty");
         }
 
@@ -200,7 +214,7 @@ public class UserGroupManager implements GroupManager {
     @Override
     public void removeGroupAuthority(String groupName, GrantedAuthority authority)
             throws IllegalArgumentException {
-        if (validString(groupName) || authority == null) {
+        if (validName(groupName) || authority == null) {
             throw new IllegalArgumentException("Group name or authority cannot be null or empty");
         }
 
