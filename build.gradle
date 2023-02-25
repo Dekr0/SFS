@@ -14,6 +14,9 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.shell:spring-shell-starter:3.0.0'
+	implementation 'io.vavr:vavr:1.0.0-alpha-4'
+	implementation 'org.jetbrains:annotations:23.0.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
