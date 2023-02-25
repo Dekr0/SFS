@@ -1,6 +1,11 @@
-package com.ece.sfs;
+package com.ece.sfs.core;
 
 import java.util.*;
+
+import com.ece.sfs.Util;
+import io.vavr.control.Either;
+
+import static com.ece.sfs.Util.validFileName;
 
 
 public class Directory extends Component {
@@ -30,21 +35,28 @@ public class Directory extends Component {
     }
 
     @Override
-    public void addComponent(Component component) {
+    public Either<Boolean, String> addComponent(Component component) {
         if (component == null) {
-            throw new IllegalArgumentException("Adding a null object into the directory");
+            return Either.right("Adding a null object into the directory");
         }
 
         components.put(component.getName(), component);
+
+        return Either.left(true);
     }
 
     @Override
-    public Component getComponent(String name) throws IllegalArgumentException {
+    public Either<Component, String> getComponent(String name) {
         if (hasComponent(name)) {
-            return components.get(name);
+            return Either.left(components.get(name));
         }
 
-        throw new IllegalArgumentException("No such file or directory: " + name);
+        return Either.right("No such file or directory: " + name);
+    }
+
+    @Override
+    public List<Component> getComponents() {
+        return new ArrayList<>(components.values());
     }
 
     @Override
@@ -53,11 +65,12 @@ public class Directory extends Component {
     }
 
     @Override
-    public void removeComponent(String name) {
+    public Either<Boolean, String> removeComponent(String name) {
         if (components.remove(name) == null) {
-            throw new IllegalArgumentException(
-                    "File or Directory" + name + "does not exist");
+            return Either.right("File or Directory" + name + "does not exist");
         }
+
+        return Either.left(true);
     }
 
     @Override
@@ -86,12 +99,14 @@ public class Directory extends Component {
     }
 
     @Override
-    public void setName(String name) {
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("Invalid name");
+    public Either<Boolean, String> setName(String name) {
+        if (validFileName(name)) {
+            return Either.right("Invalid file name");
         }
 
         this.name = name;
+
+        return Either.left(true);
     }
 
     @Override

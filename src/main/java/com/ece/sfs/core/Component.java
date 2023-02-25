@@ -1,15 +1,19 @@
-package com.ece.sfs;
+package com.ece.sfs.core;
 
+
+import io.vavr.control.Either;
+
+import java.util.List;
 
 public abstract class Component {
 
     /* The following methods are not supported for File class */
 
-    public void addComponent(Component component) {
+    public Either<Boolean, String> addComponent(Component component) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public Component getComponent(String name) {
+    public Either<Component, String> getComponent(String name) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -17,7 +21,11 @@ public abstract class Component {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    public void removeComponent(String name) {
+    public Either<Boolean, String> removeComponent(String name) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    public List<Component> getComponents() {
         throw new UnsupportedOperationException("Not implemented");
     }
 
@@ -46,7 +54,7 @@ public abstract class Component {
                 "get name of a file system component");
     }
 
-    public void setName(String name) {
+    public Either<Boolean, String> setName(String name) {
         throw new UnsupportedOperationException("Unsupported operation: cannot " +
                 "set name of a file system component");
     }

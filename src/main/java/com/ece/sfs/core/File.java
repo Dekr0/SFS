@@ -1,7 +1,12 @@
-package com.ece.sfs;
+package com.ece.sfs.core;
+
+import com.ece.sfs.Util;
+import io.vavr.control.Either;
 
 import java.util.Date;
 import java.util.UUID;
+
+import static com.ece.sfs.Util.validFileName;
 
 
 public class File extends Component {
@@ -40,12 +45,14 @@ public class File extends Component {
     }
 
     @Override
-    public void setName(String name) {
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("Invalid name");
+    public Either<Boolean, String> setName(String name) {
+        if (validFileName(name)) {
+            return Either.right("Invalid file name");
         }
 
         this.name = name;
+
+        return Either.left(true);
     }
 
     @Override
