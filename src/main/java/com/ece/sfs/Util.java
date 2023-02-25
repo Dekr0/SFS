@@ -21,7 +21,21 @@ public class Util {
         return absolutePath;
     }
 
-    public static boolean validString(String string) throws IllegalArgumentException {
-        return string == null || string.isEmpty();
+    public static boolean validName(String string) {
+        return string == null || string.isEmpty() || !string.matches("^[A-za-z0-9_ ]{1,255}$");
+    }
+
+    public static boolean validFileName(String string) {
+        return string == null || string.isEmpty() || !string.matches("^[A-za-z0-9_ ./]{1,255}$");
+    }
+
+    public static boolean validPassword(String string) {
+        return string == null || string.isEmpty() || !string
+                .matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\\\S+$).{8,32}$");
+    }
+
+    public static boolean validUUID(String string) {
+        return string == null || string.isEmpty() || !string
+                .matches("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
     }
 }
