@@ -83,7 +83,8 @@ public class AccessManager {
         return Either.left(null);
     }
 
-    public Either<Boolean, String> hasAccessRight(String groupName, String username, String uuid, AccessRight accessRight) {
+    public Either<Boolean, String> hasAccessRight(
+            String groupName, String username, String uuid, AccessRight accessRight) {
 
         if (validName(username)) {
             return Either.right("Username is not valid");

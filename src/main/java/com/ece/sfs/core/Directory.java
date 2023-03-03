@@ -13,15 +13,16 @@ public class Directory extends Component {
     private Directory parent = null;
     private Date lastModifiedDate;
     private String name = "";
+
     private final String uuid;
+
+    private String nameChecksum;
 
     private final HashMap<String, Component> components;
 
-    // TODO: Implement File Navigation
-    // TODO: Implement Group and User Access for directory
-
     public Directory(
             String name,
+            String nameChecksum,
             Directory parent,
             Date lastModifiedDate,
             UUID uuid,
@@ -29,7 +30,9 @@ public class Directory extends Component {
     ) {
         this.uuid = uuid.toString();
         this.components = components;
+
         setName(name);
+        setNameChecksum(nameChecksum);
         setParent(parent);
         setDate(lastModifiedDate);
     }
@@ -123,6 +126,28 @@ public class Directory extends Component {
         if (date instanceof Date) {
             this.lastModifiedDate = (Date) date;
         }
+    }
+
+    @Override
+    public Either<Void, String> setNameChecksum(String nameChecksum) {
+        this.nameChecksum = nameChecksum;
+
+        return Either.left(null);
+    }
+
+    @Override
+    public String getNameChecksum() {
+        return nameChecksum;
+    }
+
+    @Override
+    public boolean checkNameChecksum(String checksum) {
+        return nameChecksum.compareTo(checksum) == 0;
+    }
+
+    @Override
+    public boolean checkLengthChecksum(long checksum) {
+        return components.size() == checksum;
     }
 
     @Override

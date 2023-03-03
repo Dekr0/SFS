@@ -84,7 +84,7 @@ public class ShellPrompt {
      * @param message message to print
      */
     public void printWarning(String message) {
-        print(message, TerminalColor.valueOf(warningColor));
+        print(message, TerminalColor.YELLOW);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ShellPrompt {
      * @param message message to print
      */
     public void printError(String message) {
-        print(message, TerminalColor.valueOf(errorColor));
+        print(message, TerminalColor.RED);
     }
 
     /**

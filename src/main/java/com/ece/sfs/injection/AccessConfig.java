@@ -22,6 +22,7 @@ public class AccessConfig {
     public Directory root() {
         Directory root = new Directory(
                 "/",
+                "/",
                 null,
                 Calendar.getInstance().getTime(),
                 UUID.randomUUID(),
@@ -31,12 +32,14 @@ public class AccessConfig {
         root.addComponent(
                 new Directory(
                         "home",
+                        "home",
                         root,
                         Calendar.getInstance().getTime(),
                         UUID.randomUUID(),
                         new HashMap<>()
                 )
         );
+
 
         return root;
     }
@@ -47,7 +50,6 @@ public class AccessConfig {
     public GrantedAuthority adminAuthority() {
         return new SimpleGrantedAuthority("Admin");
     }
-
 
     @Bean
     @Scope("singleton")
@@ -76,7 +78,7 @@ public class AccessConfig {
                 root.getUUID(),
                 new AccessRightList(
                         AccessRight.defaultAR("root"),
-                        AccessRight.defaultRead("Admins")
+                        AccessRight.defaultAR("Admins")
                 )
         );
 
