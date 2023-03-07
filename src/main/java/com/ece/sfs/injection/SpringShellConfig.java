@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class SpringShellConfig {
 
     @Bean
-    public ShellPrompt shellPrompt(Terminal terminal) {
-        return new ShellPrompt(terminal);
+    public ShellPrompt shellPrompt() throws IOException {
+        return new ShellPrompt(TerminalBuilder.system(false).build());
     }
 }
